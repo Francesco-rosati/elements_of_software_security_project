@@ -1,0 +1,6 @@
+colorama~=0.4.6
+pytz~=2023.4
+numpy~=1.26.3
+pandas~=2.2.0
+scikit-learn~=1.4.0
+scapy~=2.5.0
