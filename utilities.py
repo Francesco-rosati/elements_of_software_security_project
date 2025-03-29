@@ -5,7 +5,8 @@ import sys
 import pytz
 import numpy as np
 import pandas as pd
-from datetime import datetime, timedelta
+from scapy.all import sniff
+from datetime import datetime
 from colorama import Fore, Style
 
 
@@ -17,7 +18,7 @@ def read_timestamp_files(folder_path):
     for root, dirs, files in os.walk(folder_path):
         for file_name in files:
             # check if the file is a .timestamps file
-            if file_name.endswith('.timestamps'):
+            if file_name.endswith('.txt'):
 
                 timestamps = []
 
@@ -45,26 +46,33 @@ def convert_timestamp(timestamp):
     # Convert timestamp into a datetime object and return the UNIX timestamp (epoch time)
     try:
 
-        uci_timezone = pytz.timezone('America/Los_Angeles')
+        # Parse the specific format: YYYY-MM-DD HH:MM:SS.ssssss MDT
+        mdt_datetime = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S.%f MDT")
 
-        uci_datetime = datetime.strptime(timestamp, "%m/%d/%Y %I:%M:%S %p")
+        # Define the MDT timezone
+        mdt_timezone = pytz.timezone('America/Denver')
 
-        uci_datetime_with_tz = uci_timezone.localize(uci_datetime)
+        # Assign the MDT timezone to the datetime object
+        mdt_datetime_with_tz = mdt_timezone.localize(mdt_datetime)
 
-        return uci_datetime_with_tz.timestamp()
-    except ValueError:
-        pass
+        # Convert to UNIX epoch timestamp
+        return mdt_datetime_with_tz.timestamp()
 
-    try:
-
-        gmt_datetime = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S.%f")
-
-        gmt_datetime += timedelta(hours=1)
-
-        return gmt_datetime.timestamp()
     except ValueError:
         print(f'{Fore.RED}\nERROR: timestamp format for {timestamp} not recognized!{Style.RESET_ALL}')
         sys.exit(1)
+
+
+# This function reads a .pcap file and returns a list of packets
+def _read_pcapng_files(file_path, device_ip_address, formatted_timestamp, delta):
+    # filter packets by host ip address
+    bpf_filter = f'ip host {device_ip_address}'
+
+    return sniff(filter=bpf_filter, store=True, offline=file_path, stop_filter=lambda packet: stop_filter(packet, formatted_timestamp, delta))
+
+# This function filters packets based on the timestamp and delta
+def stop_filter(packet, formatted_timestamp, delta):
+    return packet.time - formatted_timestamp > delta
 
 
 # This function computes the Median Absolute Deviation of the input data

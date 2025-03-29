@@ -10,27 +10,12 @@ def get_flow_label(activity):
 
     # Dictionary containing the label for each activity
     label_dictionary = {
-        'stream_onoff': 0,
-        'fan_onoff': 1,
-        'robot_mode': 2,
-        'intensity': 3,
-        'quickrun': 4,
-        'color': 5,
-        'armdisarm': 6,
-        'photo': 7,
-        'watch': 8,
-        'hvac': 9,
-        'lockunlock': 10,
-        'onoff': 11,
-        'mode': 12,
-        'fan': 13,
-        'startup': 14,
-        'video_stream': 15,
-        'night_vision': 16,
-        'weather': 17,
-        'wake_word': 18,
-        'volume_adjust': 19,
-        'play_video': 20
+        'speaker-startup': 0,
+        'camera-startup': 1,
+        'play-music': 2,
+        'volume-adjust': 3,
+        'video-stream': 4,
+        'call': 5
     }
 
     # Iterate over the dictionary and return the label if the activity is found
