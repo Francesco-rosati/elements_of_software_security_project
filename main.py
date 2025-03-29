@@ -10,8 +10,8 @@ delta = 20
 
 # Get dataset folder path from command line
 if len(sys.argv) < 3:
-    print(f'\n{Fore.RED}ERROR: You must provide a dataset folder path and evaluation bool as command line arguments!{Style.RESET_ALL}')
-    print(f'{Fore.YELLOW}Usage: python {sys.argv[0]} <dataset folder path> <evaluation bool>{Style.RESET_ALL}')
+    print(f'\n{Fore.RED}ERROR: You must provide a dataset folder path and evaluation state as command line arguments!{Style.RESET_ALL}')
+    print(f'{Fore.YELLOW}Usage: python {sys.argv[0]} <dataset folder path> <evaluation state ("yes" or "no")>{Style.RESET_ALL}')
     sys.exit(1)
 
 # Dataset folder path and name
@@ -19,21 +19,19 @@ main_folder_path = str(sys.argv[1])
 main_folder_name = main_folder_path.split('/')[-1]
 
 # Evaluation bool
-evaluation_bool = str(sys.argv[2]).lower()
-
-print(evaluation_bool)
+evaluation_state = str(sys.argv[2]).lower()
 
 # Training and evaluation set folder paths
 training_folder_path = f'{main_folder_path}/training - test set'
 evaluation_folder_path = None
 
-if evaluation_bool == "yes":
+if evaluation_state == "yes":
     evaluation_folder_path = f'{main_folder_path}/evaluation set'
 
 # Output folder paths
 output_training_folder_path = f'{training_folder_path}/classification_results/'
 
-if evaluation_bool == "yes":
+if evaluation_state == "yes":
     output_evaluation_folder_path = f'{evaluation_folder_path}/classification_results/'
 
 # Start the analysis of the training dataset
@@ -81,5 +79,5 @@ with open(f'{output_training_folder_path}/training_{main_folder_name}_{delta}_re
     print(f'\n{Fore.GREEN}Results successfully written!{Style.RESET_ALL}')
 
 # TODO: Write code for evaluation set
-if evaluation_bool == "yes" and evaluation_folder_path is not None:
+if evaluation_state == "yes" and evaluation_folder_path is not None:
     print("Evaluation to be performed!")
