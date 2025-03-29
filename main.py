@@ -51,14 +51,14 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random
 print(f'\n{Fore.MAGENTA}Training and testing the Random Forest classifier...{Style.RESET_ALL}')
 
 # Train and evaluate the Random Forest classifier
-accuracyRF, reportRF = train_and_test_rf_classifier(X_train, y_train, X_test, y_test)
+accuracyRF, reportRF = train_and_test_rf_classifier(X_train, y_train, X_test, y_test, delta)
 
 print(f'\n{Fore.GREEN}Model successfully trained and tested...{Style.RESET_ALL}')
 
 print(f'\n{Fore.MAGENTA}Training and evaluating the XGBoost classifier...{Style.RESET_ALL}')
 
 # Train and evaluate the XGBoost classifier
-accuracyXGB, reportXGB = train_and_test_xgb_classifier(X_train, y_train, X_test, y_test)
+accuracyXGB, reportXGB = train_and_test_xgb_classifier(X_train, y_train, X_test, y_test, delta)
 
 print(f'\n{Fore.GREEN}Model successfully trained and tested...{Style.RESET_ALL}')
 
