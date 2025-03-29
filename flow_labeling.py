@@ -1,6 +1,5 @@
 # This file contains the code used to label the flows in the dataset
 
-
 def get_flow_label(activity):
     """
     This function returns the label associated with the activity passed as parameter.

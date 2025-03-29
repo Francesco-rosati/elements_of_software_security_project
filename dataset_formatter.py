@@ -32,69 +32,69 @@ def read_training_files(folder_path, folder_name, delta):
 
     timestamps_cache = read_timestamp_files(folder_path)
 
-    # iterate over all the files in directory 'folder_path' to search for .pcap files
+    # Iterate over all the files in directory 'folder_path' to search for .pcap files
     for root, dirs, files in os.walk(folder_path):
         for file_name in files:
 
-            # check if the file is a pcap file
+            # Check if the file is a pcapng file
             if file_name.endswith('.pcapng'):
 
                 file_path = os.path.join(root, file_name)
 
-                # retrieve current activity timestamps from timestamps cache
+                # Retrieve current activity timestamps from timestamps cache
                 activity_timestamps = timestamps_cache[file_path.split("/")[-3]]
 
-                # extract device name, activity name and index from the file name
+                # Extract device name, activity name and index from the file name
                 device_name = file_path.split('/')[-4]
                 activity_name = file_path.split('/')[-3]
                 file_index = re.match(r"(.+?)(\d+)\.pcapng", file_name).group(2)
                 file_index = int(file_index)
                 device_ip_address = get_ip_address(device_name)
 
-                # find the ip address of the current analyzed device
+                # Find the ip address of the current analyzed device
                 if device_ip_address == -1:
                     print(f'{Fore.RED}\nERROR: No ip address found for device: {Style.RESET_ALL}{device_name}')
                     sys.exit(1)
 
                 print(f'\n{Fore.BLUE}Reading packets from file: {Style.RESET_ALL}{file_name}')
 
-                # find the timestamp of the current analyzed file
+                # Find the timestamp of the current analyzed file
                 file_timestamp = activity_timestamps[file_index - 1]
 
-                # obtain formatted timestamp
+                # Obtain formatted timestamp
                 formatted_timestamp = convert_timestamp(file_timestamp)
 
-                # read packet flow from the .pcapng file
+                # Read packet flow from the .pcapng file
                 filtered_packets = _read_pcapng_files(file_path, device_ip_address, formatted_timestamp, delta)
 
-                # check if the packets are empty
+                # Check if the packets are empty
                 if len(filtered_packets) != 0:
 
-                    # filter packets for out flow
+                    # Filter packets for out flow
                     outgoing_packets = list(
                         filter(lambda packet: packet[IP].src == device_ip_address, filtered_packets))
 
-                    # filter packets for in flow
+                    # Filter packets for in flow
                     incoming_packets = list(
                         filter(lambda packet: packet[IP].dst == device_ip_address, filtered_packets))
 
                     if len(outgoing_packets) != 0 and len(incoming_packets) != 0:
 
-                        # compute the features for this flow
+                        # Compute the features for this flow
                         flow_features = compute_statistical_features(filtered_packets, incoming_packets,
                                                                      outgoing_packets)
 
-                        # get the label of the current flow
+                        # Get the label of the current flow
                         label = get_flow_label(activity_name)
 
-                        # append label to dataset labels only if a label was found
+                        # Append label to dataset labels only if a label was found
                         if label != -1:
                             dataset_labels.append(label)
                         else:
                             print(f'{Fore.RED}\nERROR: No label found for flow: {Style.RESET_ALL}{activity_name}')
                             sys.exit(1)
 
-                        # append flow features to dataset features
+                        # Append flow features to dataset features
                         dataset_features.extend(flow_features)
                                 
                 print(f'{Fore.GREEN}Packets successfully read!{Style.RESET_ALL}')

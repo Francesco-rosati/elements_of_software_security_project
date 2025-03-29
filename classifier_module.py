@@ -1,4 +1,6 @@
 # This file contains the code of the Random Forest and XGBoost classifiers
+
+import joblib
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score, classification_report
@@ -6,7 +8,7 @@ from sklearn.metrics import accuracy_score, classification_report
 # TODO: provide support for the hyperparameters tuning of the classifiers (Random Forest and XGBoost)
 
 # This function is used to train and evaluate the Random Forest classifier
-def train_and_evaluate_rf_classifier(X_train, y_train, X_test, y_test):
+def train_and_test_rf_classifier(X_train, y_train, X_test, y_test):
     """
     Trains a classifier using the training set and evaluates its performance using the test set.
 
@@ -23,6 +25,9 @@ def train_and_evaluate_rf_classifier(X_train, y_train, X_test, y_test):
     # Train the final model with the training data
     model.fit(X_train, y_train)
 
+    # Save the trained model to a file
+    save_model(model, 'trained_rf_classifier.pkl')
+
     # Make predictions
     predictions = model.predict(X_test)
 
@@ -36,7 +41,7 @@ def train_and_evaluate_rf_classifier(X_train, y_train, X_test, y_test):
 
 
 # This function is used to train and evaluate the XGBoost classifier
-def train_and_evaluate_xgb_classifier(X_train, y_train, X_test, y_test):
+def train_and_test_xgb_classifier(X_train, y_train, X_test, y_test):
     """
     Trains a classifier using the training set and evaluates its performance using the test set.
 
@@ -53,6 +58,9 @@ def train_and_evaluate_xgb_classifier(X_train, y_train, X_test, y_test):
     # Train the final model with the training data
     model.fit(X_train, y_train)
 
+    # Save the trained model to a file
+    save_model(model, 'trained_xgb_classifier.pkl')
+
     # Make predictions
     predictions = model.predict(X_test)
 
@@ -62,3 +70,13 @@ def train_and_evaluate_xgb_classifier(X_train, y_train, X_test, y_test):
 
     # Return the accuracy and classification report
     return accuracy, report
+
+# This function is used to save the trained model to a file
+def save_model(model, file_name):
+    """
+    Saves the trained model to a file.
+
+    :param model: The trained model to be saved.
+    :param file_name: The name of the file where the model will be saved.
+    """
+    joblib.dump(model, file_name)

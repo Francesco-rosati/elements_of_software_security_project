@@ -2,29 +2,39 @@ import os
 import sys
 from colorama import Fore, Style
 from sklearn.model_selection import train_test_split
-from classifier_module import train_and_evaluate_rf_classifier, train_and_evaluate_xgb_classifier
+from classifier_module import train_and_test_rf_classifier, train_and_test_xgb_classifier
 from dataset_formatter import read_training_files
 
-# defining the delta value
+# Defining the delta value
 delta = 20
 
 # Get dataset folder path from command line
-if len(sys.argv) < 2:
-    print(f'\n{Fore.RED}ERROR: You must provide a dataset folder path as command line arguments!{Style.RESET_ALL}')
-    print(f'{Fore.YELLOW}Usage: python {sys.argv[0]} <dataset folder path> <dataset type>{Style.RESET_ALL}')
+if len(sys.argv) < 3:
+    print(f'\n{Fore.RED}ERROR: You must provide a dataset folder path and evaluation bool as command line arguments!{Style.RESET_ALL}')
+    print(f'{Fore.YELLOW}Usage: python {sys.argv[0]} <dataset folder path> <evaluation bool>{Style.RESET_ALL}')
     sys.exit(1)
 
 # Dataset folder path and name
 main_folder_path = str(sys.argv[1])
 main_folder_name = main_folder_path.split('/')[-1]
 
+# Evaluation bool
+evaluation_bool = str(sys.argv[2]).lower()
+
+print(evaluation_bool)
+
 # Training and evaluation set folder paths
 training_folder_path = f'{main_folder_path}/training - test set'
-evaluation_folder_path = f'{main_folder_path}/evaluation set'
+evaluation_folder_path = None
+
+if evaluation_bool == "yes":
+    evaluation_folder_path = f'{main_folder_path}/evaluation set'
 
 # Output folder paths
 output_training_folder_path = f'{training_folder_path}/classification_results/'
-output_evaluation_folder_path = f'{evaluation_folder_path}/classification_results/'
+
+if evaluation_bool == "yes":
+    output_evaluation_folder_path = f'{evaluation_folder_path}/classification_results/'
 
 # Start the analysis of the training dataset
 
@@ -41,14 +51,14 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random
 print(f'\n{Fore.MAGENTA}Training and testing the Random Forest classifier...{Style.RESET_ALL}')
 
 # Train and evaluate the Random Forest classifier
-accuracyRF, reportRF = train_and_evaluate_rf_classifier(X_train, y_train, X_test, y_test)
+accuracyRF, reportRF = train_and_test_rf_classifier(X_train, y_train, X_test, y_test)
 
 print(f'\n{Fore.GREEN}Model successfully trained and tested...{Style.RESET_ALL}')
 
 print(f'\n{Fore.MAGENTA}Training and evaluating the XGBoost classifier...{Style.RESET_ALL}')
 
 # Train and evaluate the XGBoost classifier
-accuracyXGB, reportXGB = train_and_evaluate_xgb_classifier(X_train, y_train, X_test, y_test)
+accuracyXGB, reportXGB = train_and_test_xgb_classifier(X_train, y_train, X_test, y_test)
 
 print(f'\n{Fore.GREEN}Model successfully trained and tested...{Style.RESET_ALL}')
 
@@ -69,3 +79,7 @@ with open(f'{output_training_folder_path}/training_{main_folder_name}_{delta}_re
     file.write(f'\nXGBoost Classification Report: \n\n{reportXGB}')
 
     print(f'\n{Fore.GREEN}Results successfully written!{Style.RESET_ALL}')
+
+# TODO: Write code for evaluation set
+if evaluation_bool == "yes" and evaluation_folder_path is not None:
+    print("Evaluation to be performed!")
