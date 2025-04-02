@@ -2,8 +2,9 @@ import os
 import sys
 from colorama import Fore, Style
 from sklearn.model_selection import train_test_split
-from classifier_module import train_and_test_rf_classifier, train_and_test_xgb_classifier
-from dataset_formatter import read_training_files
+from evaluation_modules.evaluation_module import evaluate_realistic_scenario
+from training_test_modules.classifier_module import train_and_test_rf_classifier, train_and_test_xgb_classifier
+from training_test_modules.dataset_formatter import read_training_files
 
 # Defining the delta value
 delta = 20
@@ -24,6 +25,7 @@ evaluation_state = str(sys.argv[2]).lower()
 # Training and evaluation set folder paths
 training_folder_path = f'{main_folder_path}/training - test set'
 evaluation_folder_path = None
+output_evaluation_folder_path = None
 
 if evaluation_state == "yes":
     evaluation_folder_path = f'{main_folder_path}/evaluation set'
@@ -35,7 +37,6 @@ if evaluation_state == "yes":
     output_evaluation_folder_path = f'{evaluation_folder_path}/classification_results/'
 
 # Start the analysis of the training dataset
-
 print(f'\n{Fore.YELLOW}Starting analysis for folder: {Style.RESET_ALL}{main_folder_name}{Fore.YELLOW} with{Style.RESET_ALL} delta = {delta}')
 
 # Read data from dataset (The same dataset is used to train and test the model)
@@ -78,6 +79,13 @@ with open(f'{output_training_folder_path}/training_{main_folder_name}_{delta}_re
 
     print(f'\n{Fore.GREEN}Results successfully written!{Style.RESET_ALL}')
 
-# TODO: Write code for evaluation set
-if evaluation_state == "yes" and evaluation_folder_path is not None:
-    print("Evaluation to be performed!")
+
+# TODO: Complete code for evaluation set
+if evaluation_state == "yes" and evaluation_folder_path is not None and output_evaluation_folder_path is not None:
+
+    print(f'\n{Fore.YELLOW}Starting evaluation for folder: {Style.RESET_ALL}{main_folder_name}{Fore.YELLOW} with{Style.RESET_ALL} delta = {delta}')
+
+    # Evaluate the realistic scenario
+    evaluate_realistic_scenario(evaluation_folder_path, delta)
+
+    print(f'\n{Fore.GREEN}Evaluation successfully completed!{Style.RESET_ALL}')

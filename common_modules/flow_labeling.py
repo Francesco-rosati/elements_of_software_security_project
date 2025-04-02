@@ -24,3 +24,23 @@ def get_flow_label(activity):
 
     # Return -1 if no matching label is found
     return -1
+
+def get_activity_name_from_label(label):
+    """
+    This function returns the activity name associated with the label passed as parameter.
+    :param label: this is the label coming from the type of captured flow.
+    :return: the string name of the activity associated with the label.
+    """
+
+    # Dictionary containing the label for each activity
+    label_dictionary = {
+        0: 'speaker-startup',
+        1: 'camera-startup',
+        2: 'play-music',
+        3: 'volume-adjust',
+        4: 'video-stream',
+        5: 'call'
+    }
+
+    # Return the activity name if the label is found
+    return label_dictionary.get(label, -1)

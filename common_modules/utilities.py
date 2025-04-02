@@ -64,7 +64,7 @@ def convert_timestamp(timestamp):
 
 
 # This function reads a .pcap file and returns a list of packets
-def _read_pcapng_files(file_path, device_ip_address, formatted_timestamp, delta):
+def read_pcapng_files(file_path, device_ip_address, formatted_timestamp, delta):
     # filter packets by host ip address
     bpf_filter = f'ip host {device_ip_address}'
 
