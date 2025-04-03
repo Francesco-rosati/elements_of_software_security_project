@@ -1,6 +1,7 @@
 # This file contains utility functions for evaluating user scenarios by processing .pcapng files.
-import os
 
+import os
+import sys
 import joblib
 from colorama import Style, Fore
 from scapy.layers.inet import IP
@@ -19,6 +20,12 @@ def window_packets(packets, delta, overlap=2):
 
     :return: list of windows, where each window is a list of packets.
     """
+
+    # Ensure delta is greater than overlap
+    if delta <= overlap:
+        print(f"\n{Fore.RED}ERROR: Delta must be greater than the overlap value to avoid infinite loops!{Style.RESET_ALL}")
+        sys.exit(1)
+
     if not packets:
         return []
 

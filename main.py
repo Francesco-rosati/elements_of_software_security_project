@@ -8,6 +8,7 @@ from training_test_modules.classifier_module import train_and_test_rf_classifier
 from training_test_modules.dataset_formatter import read_training_files
 
 # Define the delta value
+# The delta value is the time window used to split the packets into smaller windows for analysis.
 delta = 20
 
 # Get dataset folder path from command line

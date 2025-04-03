@@ -5,6 +5,7 @@ def get_ip_address(device_name):
     """
     This function returns the IP address associated with the device name passed as parameter.
     :param device_name: this is the name of the device.
+
     :return: the IP address associated with the device name.
     """
 

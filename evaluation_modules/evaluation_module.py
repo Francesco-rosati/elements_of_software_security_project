@@ -7,6 +7,10 @@ from common_modules.ip_addresses import get_ip_address
 from common_modules.utilities import list_pcapng_files, read_evaluation_pcapng_files, convert_timestamp_to_mdt
 from evaluation_modules.evaluation_utilities import window_packets, classify_window
 
+# Define overlap time in seconds -> you can change it according to the model you are using
+# The overlap time is the time between two consecutive windows. It is used to ensure that the windows are not completely disjoint.
+# Be sure to set the overlap time to a value that is less than the delta time.
+overlap = 2
 
 # This function evaluates all the user scenarios by reading packets from a pcapng file in the evaluation set
 def evaluate_user_scenarios(folder_path, delta):
@@ -58,20 +62,21 @@ def evaluate_user_scenarios(folder_path, delta):
             print(f"{Fore.RED}No packets read from {file_name}{Style.RESET_ALL}")
             continue
 
-        # TODO: Check the window_packets function
-
         # Split packets into time windows with 2 seconds overlap
-        windows = window_packets(packets, delta, overlap=2)
+        windows = window_packets(packets, delta, overlap)
         file_results = []
         for idx, window in enumerate(windows):
-            print(f"\nProcessing window {idx + 1}/{len(windows)}")
-
-            # Classify the window
-            prediction = classify_window(packets, device_ip_addresses, delta)
+            print(f"\nProcessing window {idx + 1}/{len(windows)}\n")
 
             # Convert window start and end times to MDT format
             start_mdt = convert_timestamp_to_mdt(window['start_time'])
             end_mdt = convert_timestamp_to_mdt(window['end_time'])
+
+            print(f"{Fore.YELLOW}Window start time: {Style.RESET_ALL}{start_mdt}")
+            print(f"{Fore.YELLOW}Window end time: {Style.RESET_ALL}{end_mdt}")
+
+            # Classify the window
+            prediction = classify_window(window['packets'], device_ip_addresses, delta)
 
             file_results.append({
                 "window_index": idx,
