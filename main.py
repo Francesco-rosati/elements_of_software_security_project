@@ -28,15 +28,22 @@ output_training_folder_path = os.path.join(training_folder_path, 'classification
 rf_model_path = os.path.join('rf_models', f'trained_rf_classifier_{delta}.pkl')
 xgb_model_path = os.path.join('xgb_models', f'trained_xgb_classifier_{delta}.pkl')
 
-# Function to ask the user for evaluation confirmation
-def ask_for_evaluation():
-    response = input(f'\n{Fore.CYAN}Do you want to proceed with model evaluation? (yes/no): {Style.RESET_ALL}').strip().lower()
-    return response == 'yes'
+# General function to ask the user a yes/no question
+def ask_user(question):
+    response = ""
+    while response not in {"yes", "no"}:
+        response = input(f'\n{Fore.CYAN}{question} (yes/no): {Style.RESET_ALL}').strip().lower()
+        if response not in {"yes", "no"}:
+            print(f'{Fore.RED}Invalid input! Please enter "yes" or "no".{Style.RESET_ALL}')
+    return response == "yes"
 
-# Function to ask the user if they want to retrain the models
+# Function to ask for evaluation confirmation
+def ask_for_evaluation():
+    return ask_user("Do you want to proceed with model evaluation?")
+
+# Function to ask if the user wants to retrain the models
 def ask_for_retraining():
-    response = input(f'\n{Fore.CYAN}Pre-trained models found! Do you want to retrain the models? (yes/no): {Style.RESET_ALL}').strip().lower()
-    return response == 'yes'
+    return ask_user("Pre-trained models found! Do you want to retrain the models?")
 
 # Function to perform training and writing of results
 def run_training():
