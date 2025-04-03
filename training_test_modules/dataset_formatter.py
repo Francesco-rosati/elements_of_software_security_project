@@ -8,7 +8,7 @@ from colorama import Fore, Style
 from scapy.layers.inet import IP
 from common_modules.flow_labeling import get_flow_label
 from common_modules.ip_addresses import get_ip_address
-from common_modules.utilities import read_timestamp_files, convert_timestamp, read_pcapng_files, compute_statistical_features
+from common_modules.utilities import read_timestamp_files, convert_timestamp, read_training_pcapng_files, compute_statistical_features
 
 
 # This function analyzes .pcapng files and reads .timestamps files in a folder and related subfolders
@@ -65,7 +65,7 @@ def read_training_files(folder_path, folder_name, delta):
                 formatted_timestamp = convert_timestamp(file_timestamp)
 
                 # Read packet flow from the .pcapng file
-                filtered_packets = read_pcapng_files(file_path, device_ip_address, formatted_timestamp, delta)
+                filtered_packets = read_training_pcapng_files(file_path, device_ip_address, formatted_timestamp, delta)
 
                 # Check if the packets are empty
                 if len(filtered_packets) != 0:

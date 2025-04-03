@@ -6,7 +6,7 @@ import pytz
 import numpy as np
 import pandas as pd
 from scapy.all import sniff
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from colorama import Fore, Style
 
 
@@ -63,8 +63,41 @@ def convert_timestamp(timestamp):
         sys.exit(1)
 
 
-# This function reads a .pcap file and returns a list of packets
-def read_pcapng_files(file_path, device_ip_address, formatted_timestamp, delta):
+# This function converts a UNIX timestamp to a formatted string in MDT
+def convert_timestamp_to_mdt(timestamp):
+    """
+    Converts a UNIX timestamp to Mountain Daylight Time (MDT) format.
+
+    :param timestamp: The UNIX timestamp to convert.
+    :return: A string representation of the timestamp in MDT.
+    """
+    dt_utc = datetime.fromtimestamp(timestamp, timezone.utc)
+
+    # MDT is UTC-6
+    mdt = dt_utc.astimezone(timezone(timedelta(hours=-6)))
+
+    return mdt.strftime('%Y-%m-%d %H:%M:%S MDT')
+
+
+# This function returns the list of .pcapng files present in the specified folder
+def list_pcapng_files(folder_path):
+    """
+    Returns a list of .pcapng files present in the specified folder.
+    """
+    return [os.path.join(folder_path, f) for f in os.listdir(folder_path) if f.endswith('.pcapng')]
+
+
+# This function reads a .pcapng file from the evaluation set and returns a list of packets
+def read_evaluation_pcapng_files(file_path, device_ip_addresses):
+
+    # filter packets by host ip addresses
+    bpf_filter = ' or '.join([f'ip host {ip}' for ip in device_ip_addresses])
+
+    return sniff(filter=bpf_filter, store=True, offline=file_path)
+
+
+# This function reads a .pcapng file from the training / test set and returns a list of packets
+def read_training_pcapng_files(file_path, device_ip_address, formatted_timestamp, delta):
     # filter packets by host ip address
     bpf_filter = f'ip host {device_ip_address}'
 
