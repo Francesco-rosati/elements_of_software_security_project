@@ -10,11 +10,12 @@ The system supports both training and evaluation phases, and it has been tested 
 
 * ENSF 619 IoT Dataset: https://osf.io/zf8pm/files/osfstorage
 
-It contains network captures and activity timestamps from two IoT devices (Sonos Smart Speaker and TP-Link Tapo Smart Camera) under several user interactions. 
+It contains network captures and activity timestamps from two IoT devices (Sonos Smart Speaker and TP-Link Tapo Smart Camera) under several user activities: 
+camera and speaker startup, speaker play music and volume adjustment, camera call and video stream. 
 
 The dataset is organized into:
 
-- A **training-test set** directory used for model development.
+- A **training / test set** directory used for model development.
 - An **evaluation set** directory simulating real user behavior for testing model generalization.
 
 ## Project Structure
@@ -35,7 +36,7 @@ The project is organized into the following components:
 
 ## Functionality
 
-- **Automatic training**: If no model files are found, both classifiers are trained and saved.
+- **Automatic training**: If no model files are found, both classifiers are trained and the models saved.
 - **Model reuse**: If trained models exist, the user is asked whether to reuse or retrain them.
 - **Optional evaluation**: After training or detecting existing models, the user can choose to run an evaluation on realistic traffic.
 
@@ -50,6 +51,7 @@ Results are saved in the `classification_results/` folder. Each output file (e.g
 
 The evaluation results are saved in the `evaluation_results/` folder. Each output file (e.g., `evaluation_<dataset_name>_<delta>_results.txt`) includes:
 
+- Name of the files evaluated
 - Window start and end timestamps
 - Classifiers predictions
 
@@ -70,7 +72,7 @@ The project requires the following Python packages:
 
    ```bash
    git clone https://github.com/Francesco-rosati/elements_of_software_security_project.git
-   cd elements of_software_security_project
+   cd elements_of_software_security_project
    ```
 
 2. Install dependencies:
@@ -129,9 +131,9 @@ Applies both trained classifiers to the evaluation set and outputs the classific
 
 ---
 
-### `get_flow_label(activity, index)`
+### `get_flow_label(activity)`
 
-Assigns an integer label to a device activity based on the analyzed event.
+Assigns and returns an integer label to a device activity based on its name.
 
 ---
 

@@ -114,7 +114,7 @@ def write_window_results(output_evaluation_folder_path, main_folder_name, delta,
                 file.write('\tNo valid windows were processed.\n')
             else:
                 for window in windows:
-                    file.write(f'\tWindow {window["window_index"]}:\n')
+                    file.write(f'\tWindow {window["window_index"] + 1}:\n')
                     file.write(f'\t\tStart Time (MDT): {window["start_time_mdt"]}\n')
                     file.write(f'\t\tEnd Time (MDT): {window["end_time_mdt"]}\n\n')
                     file.write(f'\t\tRandom Forest prediction: {window["rf_prediction"]}\n')
