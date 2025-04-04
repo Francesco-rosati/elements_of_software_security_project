@@ -119,7 +119,7 @@ if perform_evaluation:
         sys.exit(1)
 
     # Create test set folder
-    output_evaluation_folder_path = os.path.join(evaluation_folder_path, 'classification_results')
+    output_evaluation_folder_path = os.path.join(evaluation_folder_path, 'evaluation_results')
 
     # Create the output folder if it doesn't exist
     os.makedirs(output_evaluation_folder_path, exist_ok=True)

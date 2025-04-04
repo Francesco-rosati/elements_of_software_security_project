@@ -2,140 +2,157 @@
 
 ## Project Description
 
-This project aims to analyze and classify network flows captured from Internet of Things (IoT) devices. The primary goal is to develop a classification model that can accurately categorize different activities or behaviors exhibited by these devices based on network traffic data. The analysis involves processing packet captures (.pcap files) and associated timestamps to extract features, which are then used to train a Random Forest classifier.
+This project aims to analyze and classify network flows captured from Internet of Things (IoT) devices. The primary goal is to develop classification models that can accurately detect different activities performed by these devices, only based on their network traffic. The pipeline involves capturing network traffic, extracting statistical features from .pcapng files using activity timestamps and training two machine learning models (Random Forest and XGBoost) to recognize patterns.
+
+The system supports both training and evaluation phases, and it has been tested on realistic usage scenarios involving two smart home IoT devices.
 
 ## Dataset used for the implementation:
-* Pingpong Dataset: https://athinagroup.eng.uci.edu/projects/pingpong/data/
-* Bhosale Dataset (link of the paper): https://www.scitepress.org/Papers/2021/104765/104765.pdf
+
+* ENSF 619 IoT Dataset: https://osf.io/zf8pm/files/osfstorage
+
+It contains network captures and activity timestamps from two IoT devices (Sonos Smart Speaker and TP-Link Tapo Smart Camera) under several user interactions. 
+
+The dataset is organized into:
+
+- A **training-test set** directory used for model development.
+- An **evaluation set** directory simulating real user behavior for testing model generalization.
 
 ## Project Structure
 
-The project is organized into the following files:
+The project is organized into the following components:
 
-- **main.py**: Main script to execute the classification process.
-- **classifier_module.py**: Random Forest classifier implementation.
-- **dataset_formatter.py**: Dataset formatting functions.
-- **flow_labeling.py**: Flow labeling functions.
-- **ip_addresses.py**: IP address mapping functions.
-- **utilities.py**: Utility functions for IP address extraction, timestamp conversion and statistical feature computation.
+- `main.py`: Main script to execute the training, testing and (optional) evaluation phases.
+- `training_test_modules/`:
+  - `classifier_module.py`: Contains functions to train and test both Random Forest and XGBoost classifiers.
+  - `dataset_formatter.py`: Functions to parse, format and extract features from raw traffic.
+- `evaluation_modules/`:
+  - `evaluation_module.py`: Implements the evaluation logic on the user scenarios.
+  - `evaluation_utilities.py`: Contains utility functions for the evaluation phase.
+- `common_modules/`:
+  - `flow_labeling.py`: Functions to assign labels to activities based on timestamps.
+  - `ip_addresses.py`: Maps device names to IP addresses.
+  - `utilities.py`: Helper functions for timestamp parsing, packet filtering and feature computation.
 
-## Modules
+## Functionality
 
-### 1. Utilities Module (utilities.py)
+- **Automatic training**: If no model files are found, both classifiers are trained and saved.
+- **Model reuse**: If trained models exist, the user is asked whether to reuse or retrain them.
+- **Optional evaluation**: After training or detecting existing models, the user can choose to run an evaluation on realistic traffic.
 
-This module provides utility functions for various tasks, including converting timestamps, filtering packets based on timestamps and computing statistical features from packet lengths.
+## Training / Test Results
 
-### 2. Classifier Module (classifier_module.py)
+Results are saved in the `classification_results/` folder. Each output file (e.g., `training_<dataset_name>_<delta>_results.txt`) includes:
 
-The classifier module implements a Random Forest classifier. It includes a function to train and evaluate the classifier both for a dataset with a unified set of data and a dataset with two distinct sets of data. The module also showcases the use of cross-validation and scaling features.
+- Classifier accuracy
+- Full classification report (precision, recall, F1-score)
 
-### 3. Dataset Formatting Module (dataset_formatter.py)
+## Evaluation Results
 
-This module is responsible for reading dataset files, including .pcap and .timestamps files. It extracts features from packet flows, combines them with corresponding labels and prepares the data for training the classifier. The module includes functions to read .timestamps files, read .pcap files and format the overall dataset.
+The evaluation results are saved in the `evaluation_results/` folder. Each output file (e.g., `evaluation_<dataset_name>_<delta>_results.txt`) includes:
 
-### 4. Flow Labeling Module (flow_labeling.py)
-
-The flow labeling module provides functions for classifying activities based on labels and indices obtained from timestamps. It assigns integer labels to different IoT device activities, allowing for easier interpretation and analysis of the classification results.
-
-### 5. IP Addresses Module (ip_addresses.py)
-
-The IP Addresses module provides a function to map device names to their corresponding IP addresses. This is useful for identifying the source and destination of network traffic flows.
-
-## Results
-
-The classification results, including accuracy and a detailed classification report, are saved in the output folder. The output file is named `<dataset_name>_results.txt` and contains the following information:
-
-- Accuracy of the classifier.
-- Classification Report, including precision, recall and F1-score for each class.
+- Window start and end timestamps
+- Classifiers predictions
 
 ## Dependencies
 
-The project relies on the following Python libraries:
+The project requires the following Python packages:
 
-- **Colorama**: A Python library for adding color to terminal text.
-- **NumPy**: A library for numerical operations in Python.
-- **Pandas**: A data manipulation library.
-- **Scapy**: A library for capturing, crafting and sending network packets.
-- **Scikit-learn**: A machine learning library for Python.
-
-These libraries must be installed in the Python environment before running the project.
+- `colorama`
+- `numpy`
+- `pandas`
+- `scapy`
+- `scikit-learn`
+- `xgboost`
 
 ## Installation
 
 1. Clone the repository:
 
-    ```bash
-    git clone https://github.com/ldklab/netpolicy.git
-    cd network_IoT_traffic_classifier
-    ```
+   ```bash
+   git clone https://github.com/Francesco-rosati/elements_of_software_security_project.git
+   cd elements of_software_security_project
+   ```
 
 2. Install dependencies:
 
-    ```bash
-    pip install -r requirements.txt
-    ```
-
+   ```bash
+   pip install -r requirements.txt
+   ```
+   
 ## How to Use
 
-1. **Dataset Preparation**: Ensure your dataset is organized with subfolders for each device containing both .pcap and .timestamps files.
+1. Organize your dataset in the following structure:
 
-2. **Run Classifier**: Execute the main script to train and evaluate the Random Forest classifier. Specify the dataset folder path and name as command-line arguments.
-
+   ```
+   dataset_folder/
+   ├── training - test set/
+   │   ├── <device_1>/
+   │   │   ├── device_traffic.pcapng
+   │   │   └── timestamps.txt
+   │   └── ...
+   └── evaluation set/
+       ├── traffic_scenario.pcapng
+       └── ...
+   ```
+   
+2. Run the main script:
 
    ```bash
-   python main.py <dataset_folder_path> <dataset_type>
-    ```
+   python main.py <dataset_folder_path>
+   ```
 
-   - Values allowed for <dataset_type> are: "unified_set" or "distinct_sets":
-     
-     - `unified_set`: with the read pcap files, a single feature matrix will be created. That matrix will then be split into training and test sets according to the following proportions: 75% for training set and 25% for test set;
-     - `distinct_sets`: with the read pcap files, two distinct feature matrices will be created. One matrix will be used for training the model, while the other one will be used for testing it;
+   - `<dataset_folder_path>`: Path to the folder containing the dataset (e.g., `./dataset`)
 
-## Main Functions
+## Main Functions Overview
 
-### `read_dataset_files(folder_path, folder_name)`
+### `read_training_files(folder_path, folder_name, delta)`
 
-This function iterates over all the files in the given directory, identifies pcap (`.pcap`) and timestamps (`.timestamps`) files and reads their contents. It then returns two NumPy arrays that are used as data and target for the classifier.
+Reads `.pcapng` and `.timestamps` files, extracts features within `delta` seconds of activity start and returns the feature matrix and label array.
 
-#### Parameters:
-- `folder_path` (str): The path to the folder containing pcap and timestamps files.
-- `folder_name` (str): The name of the folder containing the dataset.
+---
 
-#### Returns:
-- `dataset_features` (numpy.ndarray): NumPy array (matrix) representing the features for the classifier.
-- `dataset_labels` (numpy.ndarray): NumPy array representing the class labels associated with the features.
+### `train_and_test_rf_classifier(X_train, y_train, X_test, y_test, delta)`
 
-### `get_ip_address(device_name)`
+Trains a Random Forest model and returns accuracy and a full classification report.
 
-This function returns the IP address associated with the device name passed as a parameter.
+---
 
-#### Parameters:
-- `device_name` (str): The name of the device.
+### `train_and_test_xgb_classifier(X_train, y_train, X_test, y_test, delta)`
 
-#### Returns:
-- `ip_address` (list): A list of IP addresses associated with the device name. Returns -1 if no matching IP address is found.
+Trains an XGBoost model and returns accuracy and a classification report.
+
+---
+
+### `def evaluate_user_scenarios(folder_path, delta)`
+
+Applies both trained classifiers to the evaluation set and outputs the classification performance over realistic user behavior.
+
+---
 
 ### `get_flow_label(activity, index)`
 
-This function returns the label associated with the activity passed as a parameter.
+Assigns an integer label to a device activity based on the analyzed event.
 
-#### Parameters:
-- `activity` (str): The activity coming from the type of captured flow.
-- `index` (int): Indicates whether the flow is associated with the Toggle-ON or Toggle-OFF of the activity, according to the timestamp.
+---
 
-#### Returns:
-- `label` (int): The integer label associated with the activity.
+### `get_ip_address(device_name)`
 
-### `train_and_evaluate_classifier(X_train, y_train, X_test, y_test)`
+Returns the IP address associated with the given device name.
 
-Trains a Random Forest classifier using the training set and evaluates its performance using the test set.
+---
 
-#### Parameters:
-- `X_train` (numpy.ndarray): Array-like or matrix of shape (n_samples, n_features) representing the features from the training set of the dataset.
-- `y_train` (numpy.ndarray): Array-like of shape (n_samples) representing the class labels associated with the features in X from the training set of the dataset.
-- `X_test` (numpy.ndarray): Array-like or matrix of shape (n_samples, n_features) representing the features from the test set of the dataset.
-- `y_test` (numpy.ndarray): Array-like of shape (n_samples) representing the class labels associated with the features in X from the test set of the dataset.
+### `window_packets(packets, delta, overlap=2)`
 
-#### Returns:
-- `accuracy` (float): The accuracy of the classifier.
-- `report` (str): The classification report.
+Filters packets within a specified time window (`delta`) and overlap to create a list of packets for each activity.
+It returns a list of windows, each containing a list of packets.
+
+---
+
+## Notes
+
+- `delta` is the analysis window used to extract features around each activity timestamp.
+- `overlap` represents the number of seconds to overlap between consecutive windows, and it has to be lower than `delta`.
+- The model performance varies depending on the delta value. Typical values include: `20s`, `10s`, `5s`, `1s`, etc.
+- Each model is saved under:
+  - `rf_models/trained_rf_classifier_<delta>.pkl`
+  - `xgb_models/trained_xgb_classifier_<delta>.pkl`
