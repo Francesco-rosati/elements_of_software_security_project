@@ -78,6 +78,10 @@ def evaluate_user_scenarios(folder_path, delta):
             # Classify the window
             prediction = classify_window(window['packets'], device_ip_addresses, delta)
 
+            if prediction is None:
+                print(f"{Fore.RED}Window {idx + 1} is not valid!\nNo incoming or outgoing packets to analyze!{Style.RESET_ALL}")
+                continue
+
             file_results.append({
                 "window_index": idx,
                 "start_time_mdt": start_mdt,

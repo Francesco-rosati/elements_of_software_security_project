@@ -9,7 +9,7 @@ from training_test_modules.dataset_formatter import read_training_files
 
 # Define the delta value
 # The delta value is the time window used to split the packets into smaller windows for analysis.
-delta = 20
+delta = 5
 
 # Get dataset folder path from command line
 if len(sys.argv) < 2:
