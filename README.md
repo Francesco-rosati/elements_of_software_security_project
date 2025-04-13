@@ -18,7 +18,9 @@ The dataset is organized into:
 - A **training / test set** directory used for model development.
 - An **evaluation set** directory simulating real user behavior for testing model generalization.
   
-![dataset structure](data/dataset_structure.jpg)
+<p align="center">
+  <img src="data/dataset_structure.jpg" alt="Dataset Structure" width="450">
+</p>
 
 ## Project Structure
 
