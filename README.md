@@ -90,15 +90,31 @@ The project requires the following Python packages:
 1. Organize your dataset in the following structure:
 
    ```
-   dataset_folder/
+   /dataset
+   │
    ├── training - test set/
    │   ├── <device_1>/
-   │   │   ├── device_traffic.pcapng
-   │   │   └── timestamps.txt
+   │   │   ├── <activity_1>/
+   │   │   │   ├── traces/
+   │   │   │   │   ├── trace_1.pcapng
+   │   │   │   │   └── ...
+   │   │   │   └── timestamps/
+   │   │   │       └── timestamps.txt
+   │   │   └── ...
+   │   ├── <device_2>/
+   │   │   ├── <activity_1>/
+   │   │   │   ├── traces/
+   │   │   │   │   ├── trace_1.pcapng
+   │   │   │   │   └── ...
+   │   │   │   └── timestamps/
+   │   │   │       └── timestamps.txt
+   │   │   └── ...
    │   └── ...
+   │
    └── evaluation set/
-       ├── traffic_scenario.pcapng
-       └── ...
+       ├── user-scenario-non-overlapping.pcapng
+       └── user-scenario-overlapping.pcapng
+   
    ```
    
 2. Run the main script:
